@@ -20,3 +20,5 @@ extractor = ExtractData()
 print(extractor.getCoinsMarket()[0].keys())
 #lista = extractor.getCoinList()
 #print(lista)
+
+print("Listo")
