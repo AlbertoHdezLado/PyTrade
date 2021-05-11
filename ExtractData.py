@@ -10,15 +10,3 @@ class ExtractData:
 
     def getCoinsMarket(self):
         return self.cg.get_coins_markets(vs_currency='usd')
-
-
-
-
-
-
-extractor = ExtractData()
-print(extractor.getCoinsMarket()[0].keys())
-#lista = extractor.getCoinList()
-#print(lista)
-
-print("Listo")
