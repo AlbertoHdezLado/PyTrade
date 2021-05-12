@@ -4,7 +4,10 @@ import requests
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QMainWindow, QApplication, QWidget, QAction, QTableWidget, QTableWidgetItem, QVBoxLayout
 from PyQt5.QtGui import QIcon, QImage, QPixmap
-from PyQt5.QtCore import pyqtSlot
+
+from PyQt5.QtWidgets import *
+from PyQt5.QtGui import *
+from PyQt5.QtCore import *
 
 import ExtractData
 
@@ -14,6 +17,7 @@ class GUI(QWidget):
     def __init__(self):
         super().__init__()
         self.title = 'PyTrade'
+        #self.setStyleSheet('font-size: 15px', 'font-style:Inter Semi Bold')
         self.left = 0
         self.top = 0
         self.width = 300
@@ -41,26 +45,60 @@ class GUI(QWidget):
 
         # Create table
         self.tableWidget = QTableWidget()
-        self.tableWidget.setRowCount(len(list))
-        self.tableWidget.setColumnCount(4)
-        for i in range(len(list)):
 
+        font_index = QFont("Inter Semi Bold", 12)
+        font_name = QFont("Inter Semi Bold", 14)
+        font_symbol = QFont("Inter Medium", 14)
+        font_price = QFont("Inter Medium", 14)
+
+        self.tableWidget.setRowCount(len(list))
+        self.tableWidget.setColumnCount(5)
+        for i in range(5):
             url = list[i]["image"]
             image = QImage()
             image.loadFromData(requests.get(url).content)
 
             label = QtWidgets.QLabel()
-            label.setPixmap(QPixmap(image.smoothScaled(20, 20)))
+            label.setPixmap(QPixmap(image.smoothScaled(25, 25)))
 
-            self.tableWidget.setCellWidget(i, 0, label)
-            self.tableWidget.setItem(i, 1, QTableWidgetItem(list[i]["name"]))
-            self.tableWidget.setItem(i, 2, QTableWidgetItem(list[i]["symbol"]))
-            self.tableWidget.setItem(i, 3, QTableWidgetItem(str((list[i]["current_price"]))))
+            item = QTableWidgetItem(str(list[i]["market_cap_rank"]))
+            item.setFont(font_index)
+            item.setTextAlignment(Qt.AlignCenter)
+            self.tableWidget.setItem(i, 0, item)
+
+            #self.tableWidget.setCellWidget(i, 1, label)
+
+            item = QTableWidgetItem(str(list[i]["name"]))
+            item.setFont(font_name)
+            item.setTextAlignment(Qt.AlignCenter)
+            #self.tableWidget.setItem(i, 2, item)
+
+
+
+            item = QTableWidgetItem(str(list[i]["symbol"]).upper())
+            item.setFont(font_symbol)
+            item.setForeground(QBrush(QColor(160, 160, 160)))
+            item.setTextAlignment(Qt.AlignCenter)
+            #self.tableWidget.setItem(i, 3, item)
+
+
+
+            item = QTableWidgetItem(str(list[i]["current_price"]))
+            item.setFont(font_price)
+            item.setTextAlignment(Qt.AlignCenter)
+            self.tableWidget.setItem(i, 4, item)
 
         self.tableWidget.move(0, 0)
 
-        self.tableWidget.resizeRowsToContents()
+        # Adjust to content
+        self.tableWidget.verticalHeader().setDefaultSectionSize(50)
+        self.tableWidget.setFixedWidth(600)
         self.tableWidget.resizeColumnsToContents()
+
+        # Remove gridlines
+        self.tableWidget.setShowGrid(False)
+        self.tableWidget.horizontalHeader().hide()
+        self.tableWidget.verticalHeader().hide()
 
         # table selection change
         self.tableWidget.doubleClicked.connect(self.on_click)
